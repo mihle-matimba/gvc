@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Builder - Growth Vista</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #C4CC32;
+            --primary-green-dark: #b0b82b;
+            --dark-navy: #0f172a;
+            --slate-dark: #334155;
+            --slate-medium: #64748b;
+            --slate-light: #cbd5e1;
+            --background-light: #f8fafc;
+            --background-white: #ffffff;
+            --border-color: #e2e8f0;
+            --primary-font: 'Inter', sans-serif;
+        }
+
+        /* --- Base & Reset --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--primary-font); margin: 0; padding: 0;
+            background-color: var(--background-light); color: var(--slate-medium);
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 100px 0; overflow: hidden; }
+        h1, h2, h3, h4, h5, h6 { color: var(--dark-navy); }
+
+        /* --- Header --- */
+        .main-header {
+            background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); padding: 16px 0;
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .logo-img { height: 40px; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--dark-navy); }
+        .header-cta-group a { text-decoration: none; font-weight: 600; }
+        
+        .cta-button {
+            background-color: var(--primary-green); color: var(--dark-navy);
+            padding: 12px 24px; border-radius: 8px; text-decoration: none;
+            font-weight: 700; transition: all 0.3s ease; display: inline-block;
+            box-shadow: 0 2px 5px rgba(196, 204, 50, 0.2);
+        }
+        .cta-button:hover {
+            background-color: var(--primary-green-dark); transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(196, 204, 50, 0.3);
+        }
+        
+        /* --- Section Shared Styles --- */
+        .section-title { text-align: center; max-width: 800px; margin: 0 auto 60px; }
+        .section-title .subtitle { color: var(--primary-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title h1 { font-size: 3.5rem; color: var(--dark-navy); margin: 8px 0 16px; line-height: 1.1; }
+        .section-title p { font-size: 1.2rem; color: var(--slate-dark); line-height: 1.6; }
+
+        /* --- Package Builder Module --- */
+        .package-builder-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+            gap: 48px;
+            align-items: start;
+        }
+        .service-selection { background-color: var(--background-white); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden;}
+        .service-tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--border-color); background-color: var(--background-light); padding: 8px; }
+        .tab-link {
+            flex: 1 1 auto;
+            padding: 12px 16px; font-weight: 600; font-size: 0.9rem; text-align: center;
+            cursor: pointer; border: none; background-color: transparent; color: var(--slate-medium);
+            border-radius: 8px;
+            border-bottom: 3px solid transparent; transition: all 0.3s ease;
+        }
+        .tab-link:hover { background-color: #e2e8f0; color: var(--dark-navy); }
+        .tab-link.active { color: var(--dark-navy); background-color: var(--background-white); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
+        .tab-content { display: none; padding: 24px; max-height: 600px; overflow-y: auto; }
+        .tab-content.active { display: block; }
+
+        .service-item {
+            display: flex; align-items: flex-start; padding: 16px;
+            border-radius: 12px; transition: background-color 0.2s ease;
+            margin-bottom: 12px; border: 1px solid var(--border-color);
+            background-color: var(--background-white);
+        }
+        .service-item:hover { background-color: #f8fafc; }
+        .service-item input[type="checkbox"] { flex-shrink: 0; width: 20px; height: 20px; accent-color: var(--primary-green); margin-right: 16px; margin-top: 4px; cursor: pointer; }
+        .service-item-details { flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+        .service-item-details .service-title { font-weight: 600; color: var(--dark-navy); cursor: pointer; }
+        .service-item-price { text-align: right; flex-shrink: 0; }
+        .service-item-price .price-value { font-weight: 700; font-size: 1.1rem; color: var(--dark-navy); }
+        .service-item-price .freq { font-weight: 500; font-size: 0.85rem; color: var(--slate-medium); text-transform: capitalize; }
+        .consult-price { font-style: italic; color: var(--primary-green); font-weight: 600; }
+
+        .summary-box {
+            position: sticky; top: 120px;
+            background-color: var(--dark-navy); color: var(--slate-light);
+            border-radius: 16px; padding: 32px;
+        }
+        .summary-box h3 { text-align: center; margin-top: 0; color: white; }
+        #summary-list { list-style: none; padding: 0; margin: 0 0 24px 0; max-height: 250px; overflow-y: auto; }
+        #summary-list li {
+            display: flex; justify-content: space-between;
+            font-size: 0.9rem; margin-bottom: 12px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--slate-dark);
+        }
+        #summary-list li .item-title { max-width: 70%; }
+        #summary-list li .item-price { font-weight: 600; color: white; }
+        .summary-totals { border-top: 2px solid var(--primary-green); padding-top: 24px; margin-top: 24px; }
+        .total-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+        .total-row .label { font-weight: 600; color: white; }
+        .total-row .amount { font-size: 1.8rem; font-weight: 800; color: var(--primary-green); }
+        .summary-box .cta-button { width: 100%; text-align: center; margin-top: 16px; }
+        #summary-placeholder { text-align: center; color: var(--slate-medium); padding: 40px 0; }
+        
+        /* --- Assessment Form Section --- */
+        .assessment-wrapper { max-width: 800px; margin: 0 auto; background-color: white; padding: 56px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1); border: 1px solid var(--border-color);}
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-weight: 600; color: var(--dark-navy); margin-bottom: 8px; font-size: 0.9rem; }
+        .form-group input, .form-group textarea { padding: 14px 16px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--primary-font); font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; background-color: var(--background-light);}
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(196, 204, 50, 0.3);}
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .submit-button { width: 100%; padding: 16px; font-size: 1.1rem; }
+        
+        /* --- Footer --- */
+        .main-footer { background-color: var(--dark-navy); color: var(--slate-light); padding: 40px 0; text-align: center; border-top: 1px solid var(--slate-dark); }
+        .main-footer .copyright { font-size: 0.9rem; color: var(--slate-medium); }
+
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .package-builder-layout { grid-template-columns: 1fr; }
+            .summary-box { position: static; margin-top: 48px; }
+        }
+        
+        @media (max-width: 768px) {
+            section { padding: 80px 0; }
+            .section-title h1 { font-size: 2.5rem; }
+            .section-title p { font-size: 1.1rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .assessment-wrapper { padding: 40px 24px; }
+            .tab-link { font-size: 0.85rem; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="content-wrapper header-content">
+            <a href="#" class="logo-link">
+                <img src="https://static.wixstatic.com/media/ac771e_5b4f70909b57432eb9a3b493a9c41f9d~mv2.png" alt="Growth Vista Logo" class="logo-img">
+                <span class="logo-text">GrowthVista</span>
+            </a>
+            <div class="header-cta-group">
+                <a href="#assessment" class="cta-button">Get Your Quote</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="package-builder">
+            <div class="content-wrapper">
+                 <div class="section-title">
+                    <div class="subtitle">INTERACTIVE PRICING</div>
+                    <h1>Build Your Custom Accounting Package</h1>
+                    <p>No more guesswork. Select the exact services your business needs from the categories below. Your personalized package and transparent pricing will appear in the summary box, updating with every click.</p>
+                </div>
+                <div class="package-builder-layout">
+                    <div class="service-selection">
+                        <div class="service-tabs" id="service-tabs">
+                            <!-- Tab links will be generated by JS -->
+                        </div>
+                        <div id="tab-content-container">
+                            <!-- Tab content panels will be generated by JS -->
+                        </div>
+                    </div>
+                    <div class="summary-box">
+                        <h3>Your Custom Package</h3>
+                        <div id="summary-placeholder">
+                            <p>Your selected services will appear here.</p>
+                        </div>
+                        <ul id="summary-list"></ul>
+                        <div class="summary-totals" id="summary-totals" style="display: none;">
+                            <div class="total-row">
+                                <span class="label">Once-Off Total</span>
+                                <span class="amount" id="once-off-total">R 0</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="label">Monthly Total</span>
+                                <span class="amount" id="monthly-total">R 0</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="label">Annual Total</span>
+                                <span class="amount" id="annual-total">R 0</span>
+                            </div>
+                            <a href="#assessment" class="cta-button">Finalize & Request Quote</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="assessment" style="background-color: var(--background-white);">
+            <div class="content-wrapper">
+                <div class="section-title">
+                    <h2 style="font-size: 2.5rem;">Finalize Your Package Request</h2>
+                    <p>Your chosen services are ready. Just provide your contact details below, and a consultant will reach out to confirm your custom quote and answer any questions you may have.</p>
+                </div>
+                <div class="assessment-wrapper">
+                    <form class="assessment-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" required placeholder="e.g., Jane Doe">
+                            </div>
+                             <div class="form-group">
+                                <label for="business-name">Business Name (optional)</label>
+                                <input type="text" id="business-name" name="business-name" placeholder="e.g., Acme Trading">
+                            </div>
+                             <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required placeholder="you@company.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="whatsapp">WhatsApp Number</label>
+                                <input type="tel" id="whatsapp" name="whatsapp" required placeholder="e.g., 082 123 4567">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="message">Questions or Additional Details</label>
+                                <textarea id="message" name="message" placeholder="e.g., I have questions about the payroll service..."></textarea>
+                                <input type="hidden" id="selected-services-hidden" name="selected_services">
+                            </div>
+                             <div class="form-group full-width">
+                                <button type="submit" class="submit-button cta-button">Send My Package Request</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="main-footer">
+        <div class="content-wrapper">
+            <p class="copyright">© 2025 Growth Vista | Financial & Tax Specialists</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DATA ---
+        // Cleaned and structured data from your input
+        const servicesData = [
+            { id: 'adv-01', group: 'Advisory', title: 'Asset Optimisation', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-02', group: 'Advisory', title: 'Turnaround & Restructuring', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-03', group: 'Advisory', title: 'Working Capital Management', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-04', group: 'Advisory', title: 'Funding Preparation', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-05', group: 'Advisory', title: 'Virtual CFO', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-06', group: 'Advisory', title: 'Tax Debt or Dispute Management', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'adv-07', group: 'Advisory', title: 'Business Consultation & Advice (per hour)', price: 1800, frequency: 'hourly' },
+            { id: 'adv-08', group: 'Advisory', title: 'Tax advisory and strategic planning (per hour)', price: 1800, frequency: 'hourly' },
+            { id: 'afs-01', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R0-R1mil)', price: 10650, frequency: 'annually' },
+            { id: 'afs-02', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R1mil-R2mil)', price: 15785, frequency: 'annually' },
+            { id: 'afs-03', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R2mil-R5mil)', price: 20850, frequency: 'annually' },
+            { id: 'afs-04', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R5mil-R10mil)', price: 55850, frequency: 'annually' },
+            { id: 'afs-05', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R10mil- R20mil)', price: 75000, frequency: 'annually' },
+            { id: 'afs-06', group: 'Annual Financial Statements', title: 'AFS IFRS for SMEs (R20mil+)', price: 250000, frequency: 'annually' },
+            { id: 'amr-01', group: 'Annual Management Report', title: 'Annual Management Report (< R1 mil)', price: 2048.76, frequency: 'annually' },
+            { id: 'amr-02', group: 'Annual Management Report', title: 'Annual Management Report (R1-R2mil)', price: 2640.02, frequency: 'annually' },
+            { id: 'amr-03', group: 'Annual Management Report', title: 'Annual Management Report (R2-R3mil)', price: 3678.32, frequency: 'annually' },
+            { id: 'amr-04', group: 'Annual Management Report', title: 'Annual Management Report (R3-R4mil)', price: 4716.62, frequency: 'annually' },
+            { id: 'amr-05', group: 'Annual Management Report', title: 'Annual Management Report (R4-R10mil)', price: 5754.92, frequency: 'annually' },
+            { id: 'amr-06', group: 'Annual Management Report', title: 'Annual Management Report (> R10mil)', price: 6793.22, frequency: 'annually' },
+            { id: 'bt-01', group: 'Bookkeeping', title: 'Bookkeeping (1-150 transactions)', price: 1597.32, frequency: 'monthly' },
+            { id: 'bt-02', group: 'Bookkeeping', title: 'Bookkeeping (151-300 transactions)', price: 1887.37, frequency: 'monthly' },
+            { id: 'bt-03', group: 'Bookkeeping', title: 'Bookkeeping (301-450 transactions)', price: 2567.04, frequency: 'monthly' },
+            { id: 'bt-04', group: 'Bookkeeping', title: 'Bookkeeping (451-500 transactions)', price: 2897.07, frequency: 'monthly' },
+            { id: 'bt-05', group: 'Bookkeeping', title: 'Bookkeeping (501-650 transactions)', price: 5648.02, frequency: 'monthly' },
+            { id: 'bt-06', group: 'Bookkeeping', title: 'Bookkeeping (651-1100 transactions)', price: 6046.84, frequency: 'monthly' },
+            { id: 'bt-07', group: 'Bookkeeping', title: 'Bookkeeping (1101-1250 transactions)', price: 4585.14, frequency: 'monthly' },
+            { id: 'bt-08', group: 'Bookkeeping', title: 'Bookkeeping (1251+ transactions)', price: 'Book a Consultant', frequency: 'consult' },
+            { id: 'cipc-01', group: 'CIPC Services', title: 'CIPC company registration', price: 1023.88, frequency: 'once-off' },
+            { id: 'cipc-02', group: 'CIPC Services', title: 'CIPC amend company director details', price: 723.88, frequency: 'once-off' },
+            { id: 'cipc-03', group: 'CIPC Services', title: 'CIPC change of financial year end', price: 523.88, frequency: 'once-off' },
+            { id: 'cipc-04', group: 'CIPC Services', title: 'CIPC company and cc address change', price: 523.88, frequency: 'once-off' },
+            { id: 'cipc-05', group: 'CIPC Services', title: 'CIPC certificates and disclosures', price: 1023.88, frequency: 'once-off' },
+            { id: 'cipc-06', group: 'CIPC Services', title: 'CIPC re-instatements', price: 1023.88, frequency: 'once-off' },
+            { id: 'cipc-07', group: 'CIPC Services', title: 'CIPC name changes', price: 523.88, frequency: 'once-off' },
+            { id: 'pay-01', group: 'Payroll', title: 'Payroll processing (1-9 employees)', price: 900, frequency: 'monthly' },
+            { id: 'pay-02', group: 'Payroll', title: 'Payroll processing (10-19 employees)', price: 2200, frequency: 'monthly' },
+            { id: 'pay-03', group: 'Payroll', title: 'Payroll processing (20-29 employees)', price: 3000, frequency: 'monthly' },
+            { id: 'pay-04', group: 'Payroll', title: 'Payroll processing (30-39 employees)', price: 4000, frequency: 'monthly' },
+            { id: 'pay-05', group: 'Payroll', title: 'Payroll processing (40-49 employees)', price: 4750, frequency: 'monthly' },
+            { id: 'pay-06', group: 'Payroll', title: 'Payroll processing (50-59 employees)', price: 5400, frequency: 'monthly' },
+            { id: 'pay-07', group: 'Payroll', title: 'Payroll processing (60-69 employees)', price: 5950, frequency: 'monthly' },
+            { id: 'pay-08', group: 'Payroll', title: 'Payroll processing (70-100 employees)', price: 7500, frequency: 'monthly' },
+            { id: 'pay-09', group: 'Payroll', title: 'Payroll processing (101-130 employees)', price: 9100, frequency: 'monthly' },
+            { id: 'pay-10', group: 'Payroll', title: 'Payroll processing (131-160 employees)', price: 10400, frequency: 'monthly' },
+            { id: 'pay-11', group: 'Payroll', title: 'Payroll processing (161-190 employees)', price: 11400, frequency: 'monthly' },
+            { id: 'pay-12', group: 'Payroll', title: 'Payroll processing (191+ employees)', price: 17763, frequency: 'monthly' },
+            { id: 'lab-01', group: 'Labour Dept', title: 'UIF Registration', price: 1615.14, frequency: 'once-off' },
+            { id: 'lab-02', group: 'Labour Dept', title: 'UIF Filing U19', price: 1615.14, frequency: 'once-off' },
+            { id: 'lab-03', group: 'Labour Dept', title: 'UIF Amendments', price: 3634.06, frequency: 'once-off' },
+            { id: 'lab-04', group: 'Labour Dept', title: 'Annual COID Wage Return Submission', price: 1800, frequency: 'annually' },
+            { id: 'sec-01', group: 'Secretarial', title: 'Directors\' resolution adopting AFS', price: 2624.6, frequency: 'once-off' },
+            { id: 'sec-02', group: 'Secretarial', title: 'Standard Director\'s Report', price: 2624.6, frequency: 'once-off' },
+            { id: 'sec-03', group: 'Secretarial', title: 'Standard minutes for Annual General Meeting', price: 1615.15, frequency: 'once-off' },
+            { id: 'sec-04', group: 'Secretarial', title: 'Share certificate', price: 1023.88, frequency: 'once-off' },
+            { id: 'tax-01', group: 'Tax Compliance', title: 'eFiling Registration (per person)', price: 428.75, frequency: 'once-off' },
+            { id: 'tax-02', group: 'Tax Compliance', title: 'EMP101 - Employer Registration', price: 1854.52, frequency: 'once-off' },
+            { id: 'tax-03', group: 'Tax Compliance', title: 'Monthly PAYE Return (EMP201)', price: 990, frequency: 'monthly' },
+            { id: 'tax-04', group: 'Tax Compliance', title: 'Monthly PAYE Return (EMP201) - Zero Return', price: 428.75, frequency: 'monthly' },
+            { id: 'tax-05', group: 'Tax Compliance', title: 'Employees Tax Reconciliation (EMP501) (1-9 employees)', price: 1704.55, frequency: 'annually' },
+            { id: 'tax-06', group: 'Tax Compliance', title: 'Employees Tax Reconciliation (EMP501) (10-19 employees)', price: 2982.23, frequency: 'annually' },
+            { id: 'tax-07', group: 'Tax Compliance', title: 'Provisional Tax return (IRP6)', price: 2624.6, frequency: 'annually' },
+            { id: 'tax-08', group: 'Tax Compliance', title: 'Provisional Tax return (IRP6) - Nil', price: 523.88, frequency: 'annually' },
+            { id: 'tax-09', group: 'Tax Compliance', title: 'Basic Tax Return (ITR12)', price: 2624.6, frequency: 'annually' },
+            { id: 'tax-10', group: 'Tax Compliance', title: 'Basic Tax Return (ITR12) - Nil', price: 523.88, frequency: 'annually' },
+            { id: 'tax-11', group: 'Tax Compliance', title: 'Company Tax Return (ITR14) (0-R2mil)', price: 2624.6, frequency: 'annually' },
+            { id: 'tax-12', group: 'Tax Compliance', title: 'Company Tax Return (ITR14) (R2mil-R5mil)', price: 3119.4, frequency: 'annually' },
+            { id: 'tax-13', group: 'Tax Compliance', title: 'Company Tax Return (ITR14) (R5mil-R10mil)', price: 8176.63, frequency: 'annually' },
+            { id: 'tax-14', group: 'Tax Compliance', title: 'Company Tax Return (ITR14) (R10mil+)', price: 15574.53, frequency: 'annually' },
+            { id: 'tax-15', group: 'Tax Compliance', title: 'Tax Clearance (Tender/Good Standing)', price: 523.88, frequency: 'once-off' },
+            { id: 'tax-16', group: 'Tax Compliance', title: 'VAT Registration', price: 3172.59, frequency: 'once-off' },
+            { id: 'tax-17', group: 'Tax Compliance', title: 'VAT201 Return (Nil)', price: 593.15, frequency: 'monthly' },
+            { id: 'tax-18', group: 'Tax Compliance', title: 'VAT201 Return (0-R2mil)', price: 1287.96, frequency: 'monthly' },
+            { id: 'tax-19', group: 'Tax Compliance', title: 'VAT201 Return (R2mil-R5mil)', price: 2735, frequency: 'monthly' },
+            { id: 'tax-20', group: 'Tax Compliance', title: 'VAT201 Return (R5mil-R10mil)', price: 3782.76, frequency: 'monthly' },
+            { id: 'tax-21', group: 'Tax Compliance', title: 'VAT201 Return (R10mil+)', price: 10729.12, frequency: 'monthly' },
+        ];
+
+        // --- DOM ELEMENTS ---
+        const tabsContainer = document.getElementById('service-tabs');
+        const contentContainer = document.getElementById('tab-content-container');
+        const summaryList = document.getElementById('summary-list');
+        const summaryPlaceholder = document.getElementById('summary-placeholder');
+        const summaryTotals = document.getElementById('summary-totals');
+        const onceOffTotalEl = document.getElementById('once-off-total');
+        const monthlyTotalEl = document.getElementById('monthly-total');
+        const annualTotalEl = document.getElementById('annual-total');
+        const selectedServicesHiddenInput = document.getElementById('selected-services-hidden');
+        
+        // --- STATE ---
+        let selectedServices = {};
+
+        // --- GROUPING & RENDERING ---
+        const serviceGroups = servicesData.reduce((acc, service) => {
+            (acc[service.group] = acc[service.group] || []).push(service);
+            return acc;
+        }, {});
+
+        // Create tabs and content panels
+        Object.keys(serviceGroups).forEach((group, index) => {
+            // Create tab button
+            const tabButton = document.createElement('button');
+            tabButton.className = 'tab-link';
+            tabButton.textContent = group;
+            tabButton.dataset.tab = `tab-${index}`;
+            tabsContainer.appendChild(tabButton);
+
+            // Create content panel
+            const tabContent = document.createElement('div');
+            tabContent.className = 'tab-content';
+            tabContent.id = `tab-${index}`;
+            
+            serviceGroups[group].forEach(service => {
+                tabContent.innerHTML += createServiceItemHTML(service);
+            });
+
+            contentContainer.appendChild(tabContent);
+        });
+        
+        // Activate the first tab by default
+        tabsContainer.querySelector('.tab-link').classList.add('active');
+        contentContainer.querySelector('.tab-content').classList.add('active');
+
+        // --- EVENT LISTENERS ---
+        tabsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-link')) {
+                // Deactivate all
+                tabsContainer.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
+                contentContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                // Activate clicked
+                const tabId = e.target.dataset.tab;
+                e.target.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            }
+        });
+
+        contentContainer.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                const serviceId = e.target.dataset.id;
+                const service = servicesData.find(s => s.id === serviceId);
+                if (e.target.checked) {
+                    selectedServices[serviceId] = service;
+                } else {
+                    delete selectedServices[serviceId];
+                }
+                updateSummary();
+            }
+        });
+        
+        // --- FUNCTIONS ---
+        function createServiceItemHTML(service) {
+            const priceHTML = typeof service.price === 'number'
+                ? `<div class="price-value">R ${service.price.toFixed(2)}</div><div class="freq">${service.frequency.replace('-', ' ')}</div>`
+                : `<div class="consult-price">${service.price}</div>`;
+
+            return `
+                <div class="service-item">
+                    <input type="checkbox" id="service-${service.id}" data-id="${service.id}">
+                    <div class="service-item-details">
+                        <label for="service-${service.id}" class="service-title">${service.title}</label>
+                        <div class="service-item-price">${priceHTML}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSummary() {
+            summaryList.innerHTML = '';
+            let totals = { onceOff: 0, monthly: 0, annually: 0 };
+            let summaryText = [];
+
+            const services = Object.values(selectedServices);
+
+            if (services.length === 0) {
+                summaryPlaceholder.style.display = 'block';
+                summaryTotals.style.display = 'none';
+            } else {
+                summaryPlaceholder.style.display = 'none';
+                summaryTotals.style.display = 'block';
+                
+                services.forEach(service => {
+                    const price = typeof service.price === 'number' ? `R ${service.price.toFixed(2)}` : service.price;
+                    summaryList.innerHTML += `<li><span class="item-title">${service.title}</span><span class="item-price">${price}</span></li>`;
+                    summaryText.push(`${service.title} (${price})`);
+
+                    if (typeof service.price !== 'number') return;
+                    
+                    switch (service.frequency) {
+                        case 'monthly':
+                            totals.monthly += service.price;
+                            break;
+                        case 'annually':
+                            totals.annually += service.price;
+                            break;
+                        case 'once-off':
+                            totals.onceOff += service.price;
+                            break;
+                         case 'hourly': // Treat hourly as a once-off for simplicity in this quote
+                            totals.onceOff += service.price;
+                            break;
+                    }
+                });
+            }
+
+            const formatter = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' });
+            onceOffTotalEl.textContent = formatter.format(totals.onceOff);
+            monthlyTotalEl.textContent = formatter.format(totals.monthly);
+            annualTotalEl.textContent = formatter.format(totals.annually + (totals.monthly * 12));
+            
+            // Update hidden input for form submission
+            selectedServicesHiddenInput.value = summaryText.join('\n');
+        }
+    });
+    </script>
+</body>
+</html>
