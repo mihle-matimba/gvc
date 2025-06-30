@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Vista - Financial Clarity & Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #C4CC32;
+            --primary-green-dark: #b0b82b;
+            --dark-navy: #0f172a;
+            --slate-dark: #334155;
+            --slate-medium: #64748b;
+            --slate-light: #cbd5e1;
+            --background-light: #f8fafc;
+            --background-white: #ffffff;
+            --border-color: #e2e8f0;
+            --primary-font: 'Inter', sans-serif;
+        }
+
+        /* --- Base & Reset --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--primary-font); margin: 0; padding: 0;
+            background-color: var(--background-light); color: var(--slate-medium);
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 120px 0; overflow: hidden; }
+        h1, h2, h3, h4, h5, h6 { color: var(--dark-navy); }
+
+        /* --- Animations --- */
+        .reveal {
+            opacity: 0; transform: translateY(50px);
+            transition: opacity 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- Header --- */
+        .main-header {
+            background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); padding: 16px 0;
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .logo-img { height: 40px; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--dark-navy); }
+        .main-nav { display: flex; gap: 32px; }
+        .main-nav a { text-decoration: none; color: var(--slate-dark); font-weight: 600; transition: color 0.3s ease; }
+        .main-nav a:hover { color: var(--primary-green); }
+        .header-cta-group { display: flex; align-items: center; gap: 16px; }
+        .cta-button {
+            background-color: var(--primary-green); color: var(--dark-navy);
+            padding: 12px 24px; border-radius: 8px; text-decoration: none;
+            font-weight: 700; transition: all 0.3s ease; display: inline-block;
+            box-shadow: 0 2px 5px rgba(196, 204, 50, 0.2);
+        }
+        .cta-button:hover {
+            background-color: var(--primary-green-dark); transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(196, 204, 50, 0.3);
+        }
+        .mobile-menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0; }
+        .mobile-menu-toggle .icon-bar { display: block; width: 25px; height: 3px; background-color: var(--dark-navy); margin: 5px 0; transition: all 0.3s ease; }
+        
+        /* --- Hero Section --- */
+        .hero {
+            padding-top: 100px; padding-bottom: 120px; /* Adjusted padding */
+            text-align: center;
+            position: relative;
+            /* UPDATED: Background Image with Overlay */
+            background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.98)), url('https://images.unsplash.com/photo-1542621334-a254cf47763b?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center center;
+        }
+        .hero .content-wrapper { position: relative; z-index: 1; }
+        .hero .subtitle { color: var(--primary-green); font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase; }
+        .hero h1 { font-size: 3.75rem; font-weight: 800; color: var(--dark-navy); line-height: 1.1; max-width: 900px; margin: 0 auto 24px; }
+        .hero p { font-size: 1.25rem; line-height: 1.7; max-width: 700px; margin: 0 auto 48px; color: var(--slate-dark); }
+        
+        /* --- Social Proof (Logo Wall) --- MOVED & RESTYLED */
+        .social-proof-section {
+            background-color: var(--background-light); 
+            padding-top: 0; /* Adjusted for new position */
+            padding-bottom: 120px;
+        }
+        .social-proof-title { text-align: center; font-weight: 600; color: var(--slate-medium); margin-bottom: 32px; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.9rem; }
+        .logo-wall { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 64px; }
+        .logo-item {
+            height: 55px; /* UPDATED: Increased size again for more impact */
+            filter: grayscale(100%) opacity(60%);
+            transition: all 0.3s ease;
+        }
+        .logo-item:hover { filter: grayscale(0%) opacity(100%); transform: scale(1.05); }
+
+        /* --- Video Section --- UPDATED */
+        .video-section { 
+            padding-top: 120px; /* Adjusted padding */
+            padding-bottom: 80px; /* Adjusted padding */
+        }
+        .video-wrapper {
+            position: relative; border-radius: 24px; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+            aspect-ratio: 16 / 9; background-color: var(--dark-navy);
+        }
+        .video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- Section Shared Styles --- */
+        .section-title { text-align: center; max-width: 750px; margin: 0 auto 80px; }
+        .section-title .subtitle { color: var(--primary-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title h2 { font-size: 3rem; color: var(--dark-navy); margin: 8px 0 16px; line-height: 1.2; }
+        .section-title p { font-size: 1.125rem; color: var(--slate-medium); line-height: 1.6; }
+
+        /* --- Problem Section --- */
+        .problem-section { background-color: var(--background-white); }
+        .problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .problem-card {
+            background-color: var(--background-light); border-radius: 16px; padding: 40px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .problem-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1); border-color: var(--primary-green); }
+        .problem-card-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; background-color: #fef2f2;
+            border-radius: 12px; margin-bottom: 24px;
+        }
+        .problem-card-icon svg { color: #ef4444; width: 28px; height: 28px; }
+        .problem-card h3 { font-size: 1.3rem; color: var(--dark-navy); margin: 0 0 12px; }
+
+        /* --- Solution Section (Timeline) --- */
+        .solution-section { background-color: var(--background-light); }
+        .timeline-wrapper { max-width: 800px; margin: 0 auto; }
+        .timeline-item { display: flex; gap: 40px; position: relative; padding-bottom: 60px; }
+        .timeline-marker { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+        .timeline-dot { width: 24px; height: 24px; background-color: var(--background-white); border: 4px solid var(--primary-green); border-radius: 50%; z-index: 2; }
+        .timeline-line { width: 2px; flex-grow: 1; background-color: var(--border-color); }
+        .timeline-item:last-child .timeline-line { display: none; }
+        .timeline-content .step { font-weight: 700; color: var(--primary-green); letter-spacing: 0.5px; }
+        .timeline-content h3 { margin-top: 8px; margin-bottom: 12px; color: var(--dark-navy); font-size: 1.5rem; }
+        
+        /* --- NEW: Dashboard Section --- */
+        .dashboard-section { background-color: var(--background-light); }
+        .dashboard-image-wrapper {
+            position: relative; border-radius: 16px;
+            padding: 24px; background-color: var(--background-white);
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
+            border: 1px solid var(--border-color);
+        }
+        .dashboard-image-wrapper::before {
+            content: ''; position: absolute; top: 12px; left: 12px;
+            width: 54px; height: 12px;
+            background-image: url("data:image/svg+xml,%3Csvg width='54' height='12' viewBox='0 0 54 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='6' cy='6' r='6' fill='%23F87171'/%3E%3Ccircle cx='27' cy='6' r='6' fill='%23FBBF24'/%3E%3Ccircle cx='48' cy='6' r='6' fill='%2334D399'/%3E%3C/svg%3E%0A");
+            background-repeat: no-repeat;
+        }
+        .dashboard-image-wrapper .dashboard-img {
+            width: 100%; border-radius: 8px; display: block;
+            margin-top: 24px; border: 1px solid var(--border-color);
+        }
+
+
+        /* --- Case Study --- */
+        .case-study { background-color: var(--dark-navy); }
+        .case-study .section-title .subtitle { color: var(--primary-green); }
+        .case-study .section-title h2, .case-study .section-title p { color: var(--background-white); }
+        .case-study .section-title p { color: var(--slate-light); }
+        .case-study-content {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid var(--slate-dark);
+            border-radius: 24px; padding: 56px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 56px; align-items: center;
+        }
+        .case-study-narrative h3 { font-size: 1.75rem; color: white; margin: 0 0 16px; line-height: 1.3; }
+        .case-study-narrative p { color: var(--slate-light); line-height: 1.7; font-size: 1.1rem; }
+        .case-study-narrative p.bold-text { font-weight: 600; color: var(--background-white); margin-bottom: 24px; }
+        .case-study-results { display: flex; flex-direction: column; gap: 24px; }
+        .result-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--slate-dark);
+            padding: 20px 24px; border-radius: 12px;
+            display: flex; align-items: center; gap: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .result-card:hover { background-color: rgba(255, 255, 255, 0.1); transform: translateX(5px); }
+        .result-card-icon {
+            flex-shrink: 0; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background-color: var(--primary-green); border-radius: 50%;
+        }
+        .result-card-icon svg { color: var(--dark-navy); width: 22px; height: 22px; }
+        .result-card h4 { font-size: 1.1rem; color: white; margin: 0; font-weight: 600; }
+        
+        /* --- Audience Section --- */
+        .audience-section { background-color: var(--background-white); }
+        .audience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        .audience-card {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 40px;
+        }
+        .audience-card-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; background-color: #f7fee7; 
+            border-radius: 12px; margin-bottom: 24px;
+        }
+        .audience-card-icon svg { color: var(--primary-green); width: 28px; height: 28px; }
+        .audience-card h3 { font-size: 1.5rem; color: var(--dark-navy); margin: 0 0 12px; }
+        
+        /* --- Assessment Form Section --- */
+        .assessment-form-section { background-color: var(--background-light); }
+        .assessment-wrapper {
+            max-width: 800px; margin: 0 auto;
+            background-color: white; padding: 56px;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
+            border: 1px solid var(--border-color);
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-weight: 600; color: var(--dark-navy); margin-bottom: 8px; font-size: 0.9rem; }
+        .form-group input, .form-group textarea {
+            padding: 14px 16px; border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-family: var(--primary-font); font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: var(--background-light);
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(196, 204, 50, 0.3);
+        }
+        .form-group textarea { resize: vertical; min-height: 140px; }
+        .submit-button {
+            width: 100%; padding: 16px;
+            background-color: var(--primary-green); color: var(--dark-navy);
+            font-weight: 700; font-size: 1.1rem; border: none;
+            border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+        }
+        .submit-button:hover {
+            background-color: var(--primary-green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(196, 204, 50, 0.4);
+        }
+        
+        /* --- Footer --- */
+        .main-footer {
+            background-color: var(--dark-navy); color: var(--slate-light);
+            padding: 60px 0; text-align: center;
+        }
+        .main-footer .footer-nav { margin: 24px 0; display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .main-footer .footer-nav a { text-decoration: none; color: var(--slate-light); font-weight: 500; transition: color 0.3s; }
+        .main-footer .footer-nav a:hover { color: var(--primary-green); }
+        .main-footer .copyright { font-size: 0.9rem; color: var(--slate-medium); }
+        /* Logo styling for footer */
+        .main-footer .logo-link { justify-content: center; }
+        .main-footer .logo-img { filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.3s; }
+        .main-footer .logo-link:hover .logo-img { opacity: 1; }
+        .main-footer .logo-text { color: var(--background-white); opacity: 0.8; transition: opacity 0.3s; }
+        .main-footer .logo-link:hover .logo-text { opacity: 1; }
+
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .main-nav, .header-cta-group .cta-button, .header-content .logo-text { display: none; } /* Hide text logo on mobile */
+            .mobile-menu-toggle { display: block; }
+            .case-study-content { grid-template-columns: 1fr; padding: 40px; }
+            .audience-grid { grid-template-columns: 1fr; }
+        }
+        
+        .mobile-nav {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 32px;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--dark-navy);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); z-index: 999;
+        }
+        body.mobile-nav-open .mobile-nav { transform: translateX(0); }
+        .mobile-nav a { color: white; text-decoration: none; font-size: 1.5rem; font-weight: 700; }
+        .mobile-nav .cta-button { font-size: 1.25rem; padding: 14px 28px; }
+        body.mobile-nav-open .mobile-menu-toggle { position: fixed; top: 28px; right: 24px; z-index: 1001; }
+        body.mobile-nav-open .mobile-menu-toggle .icon-bar { background-color: white; }
+        body.mobile-nav-open .mobile-menu-toggle .icon-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        body.mobile-nav-open .mobile-menu-toggle .icon-bar:nth-child(2) { opacity: 0; }
+        body.mobile-nav-open .mobile-menu-toggle .icon-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+
+        @media (max-width: 768px) {
+            section { padding: 80px 0; }
+            .hero { padding-bottom: 80px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .social-proof-section { padding-bottom: 80px; }
+            .logo-wall { gap: 48px; }
+            .logo-item { height: 40px; } /* UPDATED: Increased mobile height again */
+            .video-section { padding-top: 80px; padding-bottom: 60px; }
+            .section-title { margin-bottom: 60px; }
+            .section-title h2 { font-size: 2.2rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .timeline-item { gap: 24px; }
+            .assessment-wrapper { padding: 40px 24px; }
+            .case-study-content { gap: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="mobile-nav" id="mobile-nav-panel">
+        <a href="#problem" class="mobile-nav-link">The Problem</a>
+        <a href="#solution" class="mobile-nav-link">Our Process</a>
+        <a href="#audience" class="mobile-nav-link">Who It's For</a>
+        <a href="#assessment" class="cta-button">Get Assessment</a>
+    </nav>
+
+    <header class="main-header">
+        <div class="content-wrapper header-content">
+            <a href="#" class="logo-link">
+                <img src="https://static.wixstatic.com/media/ac771e_5b4f70909b57432eb9a3b493a9c41f9d~mv2.png" alt="Growth Vista Logo" class="logo-img">
+                <span class="logo-text">GrowthVista</span>
+            </a>
+            <nav class="main-nav">
+                <a href="#solution">Our Process</a>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#audience">Who It's For</a>
+            </nav>
+            <div class="header-cta-group">
+                <a href="#assessment" class="cta-button">Get Free Assessment</a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open Menu">
+                    <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="content-wrapper reveal">
+                <div class="subtitle">FROM FINANCIAL CHAOS TO COMPLETE CLARITY</div>
+                <h1>Stop Fighting Fires. Start Driving Growth.</h1>
+                <p>Is your financial backend holding your vision hostage? We step in to clean up, reconcile, and rebuild your books, transforming them from a source of stress into a launchpad for your success.</p>
+                <a href="#assessment" class="cta-button">Book Your Free Assessment</a>
+            </div>
+        </section>
+        
+        <!-- UPDATED ORDER: Video Section -->
+        <section class="video-section">
+            <div class="content-wrapper">
+                <div class="section-title reveal">
+                    <div class="subtitle">WHO WE ARE</div>
+                    <h2>See How We Transform Chaos into Clarity</h2>
+                </div>
+                <div class="video-wrapper reveal">
+                    <video src="https://video.wixstatic.com/video/ac771e_5b68b338f2e84ab2b7a885b8d05b4c97/1080p/mp4/file.mp4" 
+                        autoplay loop muted playsinline
+                        poster="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop">
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <!-- UPDATED ORDER: Social Proof Section -->
+        <section class="social-proof-section" id="social-proof">
+            <div class="content-wrapper reveal">
+                <h3 class="social-proof-title">TRUSTED BY</h3>
+                <div class="logo-wall">
+                    <!-- TODO: REPLACE THESE PLACEHOLDERS WITH YOUR REAL CLIENT LOGOS -->
+                    <img src="https://static.wixstatic.com/media/ac771e_64f61789c3c14e70ab71f55c5ec1970f~mv2.webp" alt="BuildCo Logo" class="logo-item">
+                    <img src="https://static.wixstatic.com/media/ac771e_15245fbd9d4c4bc496a96eb737148a4b~mv2.webp" alt="Medica Logo" class="logo-item">
+                    <img src="https://static.wixstatic.com/media/ac771e_603d2fed946d4591b404525502859f85~mv2.webp" alt="Construct Logo" class="logo-item">
+                    <img src="https://static.wixstatic.com/media/ac771e_787e0521078143a8a7c4d61e9c73f6c3~mv2.webp" alt="Health Systems Logo" class="logo-item">
+                    <img src="https://static.wixstatic.com/media/ac771e_fc9f2097dd9344a3a13152d1a1474ece~mv2.webp" alt="Pro Build Logo" class="logo-item">
+                </div>
+            </div>
+        </section>
+
+        <section class="problem-section" id="problem">
+            <div class="content-wrapper">
+                <div class="section-title reveal">
+                    <div class="subtitle">THE ROADBLOCK</div>
+                    <h2>Is This Where You're Stuck?</h2>
+                    <p>Success brings complexity. If you're wrestling with any of these financial bottlenecks, it's not a sign of failure—it's a sign you're ready for a more robust financial engine.</p>
+                </div>
+                <div class="problem-grid">
+                    <div class="problem-card reveal">
+                        <div class="problem-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3>Crippling Incompleteness</h3>
+                        <p>Your records are a puzzle with missing pieces, making true financial insight a distant dream.</p>
+                    </div>
+                    <div class="problem-card reveal" style="transition-delay: 0.1s;">
+                        <div class="problem-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3>Constant Reconciliation Lag</h3>
+                        <p>Unreconciled VAT, debtors, or creditors create a fog of uncertainty, exposing you to unnecessary risk.</p>
+                    </div>
+                    <div class="problem-card reveal" style="transition-delay: 0.2s;">
+                        <div class="problem-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3>Stalled Progress</h3>
+                        <p>Audits are on hold and funding is out of reach—all because your books aren't ready for inspection.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="solution-section" id="solution">
+            <div class="content-wrapper">
+                <div class="section-title reveal">
+                    <div class="subtitle">THE BLUEPRINT FOR CLARITY</div>
+                    <h2>Your Path to Bulletproof Books</h2>
+                    <p>We deploy a meticulous, step-by-step process to systematically eliminate chaos and replace it with unwavering financial control and confidence.</p>
+                </div>
+                <div class="timeline-wrapper">
+                    <div class="timeline-item reveal">
+                        <div class="timeline-marker"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                            <div class="step">STEP 01</div>
+                            <h3>Foundation & Discovery</h3>
+                            <p>We establish a rock-solid foundation by capturing and verifying every opening balance, ensuring a pristine starting point.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item reveal">
+                        <div class="timeline-marker"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                            <div class="step">STEP 02</div>
+                            <h3>Meticulous Reconciliation</h3>
+                            <p>We achieve total alignment by reconciling every critical account—VAT, Debtors, Creditors, and your entire balance sheet.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item reveal">
+                        <div class="timeline-marker"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                           <div class="step">STEP 03</div>
+                            <h3>Trial Balance Preparation</h3>
+                            <p>With all accounts in harmony, we prepare a clean, fully reconciled trial balance, ready for the final step.</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item reveal">
+                        <div class="timeline-marker"><div class="timeline-dot"></div></div>
+                        <div class="timeline-content">
+                           <div class="step">STEP 04</div>
+                            <h3>Audit-Ready Delivery</h3>
+                            <p>We conclude by compiling a comprehensive, professional audit file, empowering you to face any scrutiny with absolute confidence.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Dashboard Section -->
+        <section class="dashboard-section" id="dashboard">
+            <div class="content-wrapper">
+                <div class="section-title reveal">
+                    <div class="subtitle">CLARITY AT A GLANCE</div>
+                    <h2>Your Financial Command Center</h2>
+                    <p>We don't just fix your books; we deliver a clear, intuitive view of your company's health, empowering you to make strategic decisions with confidence.</p>
+                </div>
+                <div class="dashboard-image-wrapper reveal">
+                    <!-- TODO: REPLACE THIS PLACEHOLDER IMAGE WITH YOUR ACTUAL DASHBOARD SCREENSHOT -->
+                    <img src="https://static.wixstatic.com/media/ac771e_c810566bf5b14cc2a11b91c6c39bb59e~mv2.jpg" alt="Financial Dashboard View" class="dashboard-img">
+                </div>
+            </div>
+        </section>
+
+        <section class="case-study" id="case-study">
+            <div class="content-wrapper reveal">
+                <div class="section-title">
+                    <div class="subtitle">CLIENT TRANSFORMATION</div>
+                    <h2>From Paralysis to Progress</h2>
+                </div>
+                <div class="case-study-content">
+                    <div class="case-study-narrative">
+                        <h3>A project-threatening audit was dead in the water.</h3>
+                        <p class="bold-text">A construction client's growth was halted. A stalled audit, caused by years of unreconciled accounts, was jeopardizing their ability to continue major projects.</p>
+                        <p>We were brought in to perform a surgical clean-up. Our team dove deep to reconcile complex contract creditors and untangle their VAT accounts. The result was a set of pristine, audit-ready trial balance files.</p>
+                    </div>
+                    <div class="case-study-results">
+                        <div class="result-card reveal" style="transition-delay: 0.1s;">
+                            <div class="result-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <h4>Audit Unlocked in Weeks</h4>
+                        </div>
+                        <div class="result-card reveal" style="transition-delay: 0.2s;">
+                            <div class="result-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                             <h4>Critical Projects Approved</h4>
+                        </div>
+                        <div class="result-card reveal" style="transition-delay: 0.3s;">
+                            <div class="result-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg></div>
+                             <h4>Investor Confidence Restored</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="audience-section" id="audience">
+            <div class="content-wrapper">
+                 <div class="section-title reveal">
+                    <div class="subtitle">WHO WE EMPOWER</div>
+                    <h2>Built for Ambitious Leaders & Visionary Businesses</h2>
+                </div>
+                <div class="audience-grid">
+                     <div class="audience-card reveal">
+                        <div class="audience-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
+                        <h3>Forward-Thinking Founders & CFOs</h3>
+                        <p>For leaders who refuse to be bogged down by financial admin and are ready to focus on strategic, high-growth initiatives.</p>
+                    </div>
+                     <div class="audience-card reveal" style="transition-delay: 0.1s;">
+                         <div class="audience-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" /></svg></div>
+                        <h3>Scaling Companies (R1m – R50m)</h3>
+                        <p>For businesses whose growth has outpaced their systems, who now need a professional financial framework to support the next level.</p>
+                    </div>
+                     <div class="audience-card reveal" style="transition-delay: 0.2s;">
+                         <div class="audience-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-1.105 0-2 .895-2 2v11.25c0 1.105.895 2 2 2h14.25c1.105 0 2-.895 2-2V10.25a2 2 0 00-2-2h-3.375m-5.25 0h5.25" /></svg></div>
+                        <h3>Complex Industries</h3>
+                        <p>With deep expertise in construction and medical practices, we expertly navigate the specialized financial challenges you face.</p>
+                    </div>
+                     <div class="audience-card reveal" style="transition-delay: 0.3s;">
+                         <div class="audience-card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15zM21 21l-5.197-5.197" /></svg></div>
+                        <h3>Funding & Audit-Bound Businesses</h3>
+                        <p>We ensure your books are not just compliant, but a compelling asset that inspires confidence in investors and auditors alike.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="assessment-form-section" id="assessment">
+            <div class="content-wrapper">
+                <div class="section-title reveal">
+                    <div class="subtitle">START YOUR JOURNEY TO CLARITY</div>
+                    <h2>Get Your Free, No-Obligation Assessment</h2>
+                    <p>Tell us about your situation. We'll provide a clear, actionable plan to get you back on track. Let's build your path to financial control, together.</p>
+                </div>
+                <div class="assessment-wrapper reveal">
+                    <form class="assessment-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" required placeholder="e.g., Jane Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="company">Company Name</label>
+                                <input type="text" id="company" name="company" placeholder="e.g., Acme Inc.">
+                            </div>
+                             <div class="form-group full-width">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required placeholder="you@company.com">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="message">Briefly describe your current financial situation</label>
+                                <textarea id="message" name="message" required></textarea>
+                            </div>
+                             <div class="form-group full-width">
+                                <button type="submit" class="submit-button">Claim My Free Assessment</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="main-footer">
+        <div class="content-wrapper">
+            <a href="#" class="logo-link">
+                <img src="https://static.wixstatic.com/media/ac771e_5b4f70909b57432eb9a3b493a9c41f9d~mv2.png" alt="Growth Vista Logo" class="logo-img">
+                <span class="logo-text">GrowthVista</span>
+            </a>
+            <nav class="footer-nav">
+                <a href="#solution">Our Process</a>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#audience">Who It's For</a>
+                <a href="#assessment">Get Assessment</a>
+            </nav>
+            <div class="copyright"> © 2024 Growth Vista. All Rights Reserved. </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(element => {
+                observer.observe(element);
+            });
+
+            const menuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileNavPanel = document.getElementById('mobile-nav-panel');
+            const toggleMenu = () => { document.body.classList.toggle('mobile-nav-open'); };
+            menuToggle.addEventListener('click', toggleMenu);
+            mobileNavPanel.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    if (document.body.classList.contains('mobile-nav-open')) {
+                        toggleMenu();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
